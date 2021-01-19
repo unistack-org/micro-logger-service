@@ -2,25 +2,48 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/google/uuid"
 	pb "github.com/unistack-org/micro-logger-service/v3/proto"
+	"github.com/unistack-org/micro/v3/client"
 	"github.com/unistack-org/micro/v3/logger"
 	"github.com/unistack-org/micro/v3/store"
 )
 
 type serviceLogger struct {
-	opts   logger.Options
-	client pb.LoggerService
-	store  store.Store
-	fields map[string]interface{}
+	opts    logger.Options
+	service string
+	client  pb.LoggerService
+	store   store.Store
+	fields  map[string]interface{}
 }
 
 func (l *serviceLogger) Init(opts ...logger.Option) error {
 	for _, o := range opts {
 		o(&l.opts)
 	}
+
+	var cli client.Client
+	if l.opts.Context != nil {
+		if v, ok := l.opts.Context.Value(clientKey{}).(client.Client); ok && v != nil {
+			cli = v
+		}
+		if v, ok := l.opts.Context.Value(serviceKey{}).(string); ok && v != "" {
+			l.service = v
+		}
+	}
+
+	if l.service == "" {
+		return fmt.Errorf("missing Service option")
+	}
+
+	if cli == nil {
+		return fmt.Errorf("missing Client option")
+	}
+
+	l.client = pb.NewLoggerService(l.service, cli)
 
 	return nil
 }
