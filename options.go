@@ -19,3 +19,10 @@ type storeKey struct{}
 func Store(s store.Store) logger.Option {
 	return logger.SetOption(storeKey{}, s)
 }
+
+type serviceKey struct{}
+
+// Service name to call logger service
+func Service(n string) logger.Option {
+	return logger.SetOption(serviceKey{}, n)
+}

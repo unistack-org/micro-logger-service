@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	pb "github.com/unistack-org/micro-logger-service/proto"
+	pb "github.com/unistack-org/micro-logger-service/v3/proto"
 	"github.com/unistack-org/micro/v3/logger"
 	"github.com/unistack-org/micro/v3/store"
 )
