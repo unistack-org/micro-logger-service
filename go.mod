@@ -7,6 +7,6 @@ require (
 	github.com/google/uuid v1.1.5
 	github.com/unistack-org/micro/v3 v3.1.3
 	google.golang.org/genproto v0.0.0-20200904004341-0bd0a958aa1d // indirect
-	google.golang.org/grpc v1.27.1
+	google.golang.org/grpc v1.35.0
 	google.golang.org/protobuf v1.25.0
 )
