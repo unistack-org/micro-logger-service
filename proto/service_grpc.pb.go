@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // LoggerClient is the client API for Logger service.
 //
@@ -49,13 +50,20 @@ type LoggerServer interface {
 type UnimplementedLoggerServer struct {
 }
 
-func (*UnimplementedLoggerServer) Log(context.Context, *Message) (*Empty, error) {
+func (UnimplementedLoggerServer) Log(context.Context, *Message) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Log not implemented")
 }
-func (*UnimplementedLoggerServer) mustEmbedUnimplementedLoggerServer() {}
+func (UnimplementedLoggerServer) mustEmbedUnimplementedLoggerServer() {}
 
-func RegisterLoggerServer(s *grpc.Server, srv LoggerServer) {
-	s.RegisterService(&_Logger_serviceDesc, srv)
+// UnsafeLoggerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LoggerServer will
+// result in compilation errors.
+type UnsafeLoggerServer interface {
+	mustEmbedUnimplementedLoggerServer()
+}
+
+func RegisterLoggerServer(s grpc.ServiceRegistrar, srv LoggerServer) {
+	s.RegisterService(&Logger_ServiceDesc, srv)
 }
 
 func _Logger_Log_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -76,7 +84,10 @@ func _Logger_Log_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Logger_serviceDesc = grpc.ServiceDesc{
+// Logger_ServiceDesc is the grpc.ServiceDesc for Logger service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Logger_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "service.Logger",
 	HandlerType: (*LoggerServer)(nil),
 	Methods: []grpc.MethodDesc{

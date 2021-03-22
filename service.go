@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
+	pbmicro "github.com/unistack-org/micro-logger-service/v3/micro"
 	pb "github.com/unistack-org/micro-logger-service/v3/proto"
 	"github.com/unistack-org/micro/v3/client"
 	"github.com/unistack-org/micro/v3/logger"
@@ -15,7 +16,7 @@ import (
 type serviceLogger struct {
 	opts    logger.Options
 	service string
-	client  pb.LoggerService
+	client  pbmicro.LoggerClient
 	store   store.Store
 	fields  map[string]interface{}
 }
@@ -43,7 +44,7 @@ func (l *serviceLogger) Init(opts ...logger.Option) error {
 		return fmt.Errorf("missing Client option")
 	}
 
-	l.client = pb.NewLoggerService(l.service, cli)
+	l.client = pbmicro.NewLoggerClient(l.service, cli)
 
 	return nil
 }
