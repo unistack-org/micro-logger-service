@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package service;
-option go_package="github.com/unistack-org/micro-logger-service/v3/proto;service";
+package servicepb;
+option go_package="go.unistack.org/micro-logger-service/v3/proto;servicepb";
 
-service Logger {
+service LoggerService {
 	rpc Log(Message) returns (Empty) {};
 }
 

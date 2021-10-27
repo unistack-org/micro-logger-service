@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/unistack-org/micro/v3/client"
-	"github.com/unistack-org/micro/v3/logger"
-	"github.com/unistack-org/micro/v3/store"
+	"go.unistack.org/micro/v3/client"
+	"go.unistack.org/micro/v3/logger"
+	"go.unistack.org/micro/v3/store"
 )
 
 type clientKey struct{}

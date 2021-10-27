@@ -1,4 +1,4 @@
-package service
+package service // import "go.unistack.org/micro-logger-service/v3"
 
 import (
 	"context"
@@ -6,17 +6,17 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	pbmicro "github.com/unistack-org/micro-logger-service/v3/micro"
-	pb "github.com/unistack-org/micro-logger-service/v3/proto"
-	"github.com/unistack-org/micro/v3/client"
-	"github.com/unistack-org/micro/v3/logger"
-	"github.com/unistack-org/micro/v3/store"
+	pbmicro "go.unistack.org/micro-logger-service/v3/micro"
+	pb "go.unistack.org/micro-logger-service/v3/proto"
+	"go.unistack.org/micro/v3/client"
+	"go.unistack.org/micro/v3/logger"
+	"go.unistack.org/micro/v3/store"
 )
 
 type serviceLogger struct {
 	opts    logger.Options
 	service string
-	client  pbmicro.LoggerClient
+	client  pbmicro.LoggerServiceClient
 	store   store.Store
 	fields  map[string]interface{}
 }
@@ -44,7 +44,7 @@ func (l *serviceLogger) Init(opts ...logger.Option) error {
 		return fmt.Errorf("missing Client option")
 	}
 
-	l.client = pbmicro.NewLoggerClient(l.service, cli)
+	l.client = pbmicro.NewLoggerServiceClient(l.service, cli)
 
 	return nil
 }
