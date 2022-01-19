@@ -18,7 +18,19 @@ type serviceLogger struct {
 	service string
 	client  pbmicro.LoggerServiceClient
 	store   store.Store
-	fields  map[string]interface{}
+	fields  []interface{}
+}
+
+func (l *serviceLogger) Clone(opts ...logger.Option) logger.Logger {
+	nl := &serviceLogger{service: l.service, store: l.store, client: l.client, opts: l.opts}
+	for _, o := range opts {
+		o(&nl.opts)
+	}
+	return nl
+}
+
+func (l *serviceLogger) Level(lvl logger.Level) {
+	l.opts.Level = lvl
 }
 
 func (l *serviceLogger) Init(opts ...logger.Option) error {
@@ -49,12 +61,9 @@ func (l *serviceLogger) Init(opts ...logger.Option) error {
 	return nil
 }
 
-func (l *serviceLogger) Fields(fields map[string]interface{}) logger.Logger {
-	nl := &serviceLogger{opts: l.opts, client: l.client, store: l.store}
-	nl.fields = make(map[string]interface{}, len(fields))
-	for k, v := range fields {
-		nl.fields[k] = v
-	}
+func (l *serviceLogger) Fields(fields ...interface{}) logger.Logger {
+	nl := &serviceLogger{fields: l.fields, service: l.service, opts: l.opts, client: l.client, store: l.store}
+	nl.fields = append(nl.fields, fields...)
 	return nl
 }
 
