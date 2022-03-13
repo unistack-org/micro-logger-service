@@ -4,12 +4,12 @@ package servicepb;
 option go_package="go.unistack.org/micro-logger-service/v3/proto;servicepb";
 
 service LoggerService {
-	rpc Log(Message) returns (Empty) {};
+	rpc Log(LogReq) returns (LogRsp) {};
 }
 
-message Empty {};
+message LogRsp {};
 
-message Message {
+message LogReq {
   int32 level = 1;
 	string format = 2;
 	string msg = 3;
@@ -18,12 +18,5 @@ message Message {
 
 message Field {
   string key = 1;
-  oneof val {
-    // https://developers.google.com/protocol-buffers/docs/proto3#scalar
-    double double_val = 2;
-    float float_val = 3;
-    int32 int32_val = 4;
-    int64 int64_val = 5;
-    //1
-  };
+  string val = 2;
 };
