@@ -13,15 +13,29 @@ import (
 	"go.unistack.org/micro/v3/store"
 )
 
+var _ logger.Logger = &serviceLogger{}
+
 type serviceLogger struct {
 	opts    logger.Options
 	service string
 	client  pbmicro.LoggerServiceClient
 	store   store.Store
-	fields  map[string]interface{}
+}
+
+func (l *serviceLogger) Clone(opts ...logger.Option) logger.Logger {
+	nl := &serviceLogger{service: l.service, store: l.store, client: l.client, opts: l.opts}
+	for _, o := range opts {
+		o(&nl.opts)
+	}
+	return nl
+}
+
+func (l *serviceLogger) Level(lvl logger.Level) {
+	l.opts.Level = lvl
 }
 
 func (l *serviceLogger) Init(opts ...logger.Option) error {
+	// TODO: optimize to store only []string as fields
 	for _, o := range opts {
 		o(&l.opts)
 	}
@@ -49,13 +63,9 @@ func (l *serviceLogger) Init(opts ...logger.Option) error {
 	return nil
 }
 
-func (l *serviceLogger) Fields(fields map[string]interface{}) logger.Logger {
-	nl := &serviceLogger{opts: l.opts, client: l.client, store: l.store}
-	nl.fields = make(map[string]interface{}, len(fields))
-	for k, v := range fields {
-		nl.fields[k] = v
-	}
-	return nl
+func (l *serviceLogger) Fields(fields ...interface{}) logger.Logger {
+	// TODO: optimize to store only []string as fields
+	return l.Clone(logger.WithFields(fields...))
 }
 
 func (l *serviceLogger) V(level logger.Level) bool {
@@ -114,17 +124,15 @@ func (l *serviceLogger) Fatalf(ctx context.Context, msg string, args ...interfac
 
 func (l *serviceLogger) Log(ctx context.Context, level logger.Level, args ...interface{}) {
 	msg := l.newMessage(level, "", args...)
-	_, err := l.client.Log(ctx, msg)
-	if err != nil {
-		l.storeMessage(ctx, msg)
+	if _, err := l.client.Log(ctx, msg); err != nil {
+		_ = l.storeMessage(ctx, msg)
 	}
 }
 
 func (l *serviceLogger) Logf(ctx context.Context, level logger.Level, format string, args ...interface{}) {
 	msg := l.newMessage(level, "", args...)
-	_, err := l.client.Log(ctx, msg)
-	if err != nil {
-		l.storeMessage(ctx, msg)
+	if _, err := l.client.Log(ctx, msg); err != nil {
+		_ = l.storeMessage(ctx, msg)
 	}
 }
 
@@ -143,12 +151,18 @@ func NewLogger(opts ...logger.Option) logger.Logger {
 	return l
 }
 
-func (l *serviceLogger) newMessage(level logger.Level, format string, args ...interface{}) *pb.Message {
-	msg := &pb.Message{Level: int32(level), Format: format}
+func (l *serviceLogger) newMessage(level logger.Level, format string, args ...interface{}) *pb.LogReq {
+	msg := &pb.LogReq{Level: int32(level), Format: format, Fields: make([]*pb.Field, 0, len(l.opts.Fields)/2)}
+	for idx := 0; idx < len(l.opts.Fields); idx += 2 {
+		msg.Fields = append(msg.Fields, &pb.Field{
+			Key: fmt.Sprintf("%v", l.opts.Fields[idx]),
+			Val: fmt.Sprintf("%v", l.opts.Fields[idx+1]),
+		})
+	}
 	return msg
 }
 
-func (l *serviceLogger) storeMessage(ctx context.Context, msg *pb.Message) error {
+func (l *serviceLogger) storeMessage(ctx context.Context, msg *pb.LogReq) error {
 	if l.store == nil {
 		return nil
 	}

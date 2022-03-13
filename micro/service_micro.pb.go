@@ -22,9 +22,9 @@ func NewLoggerServiceEndpoints() []api.Endpoint {
 }
 
 type LoggerServiceClient interface {
-	Log(ctx context.Context, req *proto.Message, opts ...client.CallOption) (*proto.Empty, error)
+	Log(ctx context.Context, req *proto.LogReq, opts ...client.CallOption) (*proto.LogRsp, error)
 }
 
 type LoggerServiceServer interface {
-	Log(ctx context.Context, req *proto.Message, rsp *proto.Empty) error
+	Log(ctx context.Context, req *proto.LogReq, rsp *proto.LogRsp) error
 }

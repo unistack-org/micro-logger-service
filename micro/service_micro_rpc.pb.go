@@ -21,8 +21,8 @@ func NewLoggerServiceClient(name string, c client.Client) LoggerServiceClient {
 	return &loggerServiceClient{c: c, name: name}
 }
 
-func (c *loggerServiceClient) Log(ctx context.Context, req *proto.Message, opts ...client.CallOption) (*proto.Empty, error) {
-	rsp := &proto.Empty{}
+func (c *loggerServiceClient) Log(ctx context.Context, req *proto.LogReq, opts ...client.CallOption) (*proto.LogRsp, error) {
+	rsp := &proto.LogRsp{}
 	err := c.c.Call(ctx, c.c.NewRequest(c.name, "LoggerService.Log", req), rsp, opts...)
 	if err != nil {
 		return nil, err
@@ -34,13 +34,13 @@ type loggerServiceServer struct {
 	LoggerServiceServer
 }
 
-func (h *loggerServiceServer) Log(ctx context.Context, req *proto.Message, rsp *proto.Empty) error {
+func (h *loggerServiceServer) Log(ctx context.Context, req *proto.LogReq, rsp *proto.LogRsp) error {
 	return h.LoggerServiceServer.Log(ctx, req, rsp)
 }
 
 func RegisterLoggerServiceServer(s server.Server, sh LoggerServiceServer, opts ...server.HandlerOption) error {
 	type loggerService interface {
-		Log(ctx context.Context, req *proto.Message, rsp *proto.Empty) error
+		Log(ctx context.Context, req *proto.LogReq, rsp *proto.LogRsp) error
 	}
 	type LoggerService struct {
 		loggerService
