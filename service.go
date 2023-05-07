@@ -1,4 +1,4 @@
-package service // import "go.unistack.org/micro-logger-service/v3"
+package service // import "go.unistack.org/micro-logger-service/v4"
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	pbmicro "go.unistack.org/micro-logger-service/v3/micro"
-	pb "go.unistack.org/micro-logger-service/v3/proto"
-	"go.unistack.org/micro/v3/client"
-	"go.unistack.org/micro/v3/logger"
-	"go.unistack.org/micro/v3/store"
+	pbmicro "go.unistack.org/micro-logger-service/v4/micro"
+	pb "go.unistack.org/micro-logger-service/v4/proto"
+	"go.unistack.org/micro/v4/client"
+	"go.unistack.org/micro/v4/logger"
+	"go.unistack.org/micro/v4/store"
 )
 
 var _ logger.Logger = &serviceLogger{}
