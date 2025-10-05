@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.6.0
 	go.unistack.org/micro/v3 v3.10.11
 	google.golang.org/grpc v1.75.1
-	google.golang.org/protobuf v1.36.9
+	google.golang.org/protobuf v1.36.10
 )
 
 require (
